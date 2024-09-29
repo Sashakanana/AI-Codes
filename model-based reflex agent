@@ -1,0 +1,57 @@
+import random
+
+# Model-based agent
+class Environment(object):
+    def __init__(self):
+        self.location = ["A", "B"]  # Locations
+        self.location_condition = {"A": 0, "B": 0}  # Status of locations
+        # Randomly assign cleanliness status (0 for clean, 1 for dirty)
+        self.location_condition["A"] = random.randint(0, 1)
+        self.location_condition["B"] = random.randint(0, 1)
+        # Place vacuum cleaner at a random location
+        self.vacuum_location = random.choice(self.location)
+        self.mode = ["T", "L"]  # Cleaning methods: T for Turned on, L for Left
+        # Assume past record is A=T and B=T
+        self.cleaning_method = {"A": "T", "B": "T"}
+        # Randomly generate initial cleaning history
+        self.cleaning_method["A"] = random.choice(self.mode)
+        self.cleaning_method["B"] = random.choice(self.mode)
+
+# Design the vacuum cleaner agent
+class Agent:
+    def __init__(self, environment):
+        # Randomly generate status
+        print("Environment condition:", environment.location_condition,
+              "Vacuum location:", environment.vacuum_location,
+              "Cleaning method:", environment.cleaning_method)
+        
+        count = 0
+        while count < 2:
+            if environment.location_condition[environment.vacuum_location] == 1:
+                print(environment.vacuum_location, "is dirty.")
+                # Check status, suck, mark clean, record status
+                if environment.cleaning_method[environment.vacuum_location] == "T":
+                    environment.cleaning_method[environment.vacuum_location] = "L"
+                else:
+                    environment.cleaning_method[environment.vacuum_location] = "T"
+                
+                # Mark the location as clean
+                environment.location_condition[environment.vacuum_location] = 0
+                print(environment.vacuum_location, "has been cleaned.")
+            else:
+                print(environment.vacuum_location, "is clean.")
+            
+            # Move to the next location
+            new_index = environment.location.index(environment.vacuum_location) + 1
+            if new_index == len(environment.location):  # Use length instead of hardcoding '2'
+                new_index = 0
+            
+            environment.vacuum_location = environment.location[new_index]
+            count += 1
+        
+        print("New conditions:", environment.location_condition)
+        print("Updated history:", environment.cleaning_method)
+
+# Create an environment and send the vacuum agent
+e1 = Environment()
+a1 = Agent(e1)
