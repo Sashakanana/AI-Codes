@@ -1,0 +1,73 @@
+import random
+import time
+#utility based agents
+# Class to track performance
+class Performance:
+    def __init__(self):
+        self.score = 0  # Initialize score
+
+    def display(self):
+        print("Score:", self.score)
+        print("Performance:", (self.score / 48) * 100, "%")
+
+# Class to represent the environment
+class Environment(object):
+    def __init__(self):
+        self.location = ["A", "B"]  # Locations
+        self.location_condition = {"A": 0, "B": 0}  # Status of locations
+        # Randomly assign cleanliness status (0 for clean, 1 for dirty)
+        self.location_condition["A"] = random.randint(0, 1)
+        self.location_condition["B"] = random.randint(0, 1)
+        # Place vacuum cleaner at a random location
+        self.vacuum_location = random.choice(self.location)
+        self.mode = ["T", "L"]  # Cleaning methods: T for Turned on, L for Left
+        # Randomly generate initial cleaning history
+        self.cleaning_method = {"A": random.choice(self.mode), "B": random.choice(self.mode)}
+
+# Design the vacuum cleaner agent
+class Agent:
+    def __init__(self, environment, performance):
+        print("Environment condition:", environment.location_condition,
+              "Vacuum location:", environment.vacuum_location,
+              "Cleaning method:", environment.cleaning_method)
+
+        count = 0
+        while count < 2:
+            if environment.location_condition[environment.vacuum_location] == 1:
+                print(environment.vacuum_location, "is dirty.")
+                if environment.cleaning_method[environment.vacuum_location] == "T":
+                    environment.cleaning_method[environment.vacuum_location] = "L"  # Change to Left
+                else:
+                    environment.cleaning_method[environment.vacuum_location] = "T"  # Change to Turned on
+                
+                # Mark the location as clean
+                environment.location_condition[environment.vacuum_location] = 0
+                print(environment.vacuum_location, "has been cleaned.")
+                performance.score += 1  # Increment score
+            
+            else:
+                print(environment.vacuum_location, "is clean.")
+
+            # Move to the next location
+            new_index = (environment.location.index(environment.vacuum_location) + 1) % len(environment.location)
+            environment.vacuum_location = environment.location[new_index]
+            count += 1
+        
+        print("New conditions:", environment.location_condition)
+        print("Updated history:", environment.cleaning_method)
+
+# Create a single instance of Performance and run the simulation multiple times
+thescore = Performance()
+x = 0
+
+while x < 24:
+    e1 = Environment()  # Create a new environment instance
+    a1 = Agent(e1, thescore)      # Create an agent instance with the environment
+    
+    x += 1
+    
+    # Add a delay in the loop (1 second)
+    time.sleep(1)
+
+# Display final performance results
+thescore.display()
