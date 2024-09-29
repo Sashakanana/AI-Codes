@@ -1,0 +1,46 @@
+import random
+#simple reflex agent
+# Design the environment
+class Environment(object):
+    def __init__(self):
+        # Instantiate locations and conditions 
+        # 0 indicates Clean and 1 indicates Dirty
+        self.locations = ["A", "B"]  # Locations
+        self.location_condition = {"A": 0, "B": 0}  # Status of environment
+        # Randomize conditions
+        self.location_condition["A"] = random.randint(0, 1)
+        self.location_condition["B"] = random.randint(0, 1)
+        # Place vacuum cleaner at a random location
+        self.vacuum_location = random.choice(self.locations)
+
+# Design the vacuum cleaner agent
+class Agent:
+    def __init__(self, environment):
+        self.environment = environment  # Store the environment reference
+        print("Environment condition:", environment.location_condition,
+              "Vacuum location:", environment.vacuum_location)
+        
+        count = 0
+        # Set the number of iterations to two to avoid infinite loops
+        while count < 2:
+            if self.environment.location_condition[self.environment.vacuum_location] == 1:
+                # Suck and mark clean
+                self.environment.location_condition[self.environment.vacuum_location] = 0
+                print(self.environment.vacuum_location, "has been cleaned")
+            else:
+                print(self.environment.vacuum_location, "is already clean")
+            
+            new_index = self.environment.locations.index(self.environment.vacuum_location) + 1
+            if new_index == len(self.environment.locations):  # Use length instead of hardcoding '2'
+                new_index = 0
+            
+            self.environment.vacuum_location = self.environment.locations[new_index]
+            count += 1
+        
+        # Done with cleaning
+        print("Final environment condition:", self.environment.location_condition)
+
+# Create an environment
+e1 = Environment()
+# Send the vacuum agent
+a1 = Agent(e1)
